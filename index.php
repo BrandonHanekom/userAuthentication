@@ -1,52 +1,7 @@
 <?php // Connect to the database
 include 'connection.php';
-
-// Perform the query
-$sql = "SELECT books.book_name, authors.author_name, books.year, books.genre, books.age_group
-        FROM books
-        JOIN authors ON books.author_id = authors.author_id";
-$result = mysqli_query($conn, $sql);
-
-if (!$result) {
-    // Display the error message if the query fails
-    echo "Error: " . mysqli_error($conn);
-} else {
-    // Debugging: Print the generated SQL query
-    echo "SQL Query: " . $sql . "<br>";
-
-    // Debugging: Display the result set
-    var_dump($result);
-
-    // Display the table
-    echo "<table>";
-    echo "<thead>";
-    echo "<tr>";
-    echo "<th>Book Name</th>";
-    echo "<th>Author Name</th>";
-    echo "<th>Year</th>";
-    echo "<th>Genre</th>";
-    echo "<th>Age Group</th>";
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-
-    // Loop through the result set and display the table rows
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>" . $row["book_name"] . "</td>";
-        echo "<td>" . $row["author_name"] . "</td>";
-        echo "<td>" . $row["year"] . "</td>";
-        echo "<td>" . $row["genre"] . "</td>";
-        echo "<td>" . $row["age_group"] . "</td>";
-        echo "</tr>";
-    }
-
-    echo "</tbody>";
-    echo "</table>";
-}
-
-// // Close the database connection
-// mysqli_close($conn);
+$sortValue = $_GET['sort'];
+echo $sortValue;
 ?>
 
 <!DOCTYPE html>
@@ -63,6 +18,7 @@ if (!$result) {
         <table class="table">
             <thead>
                 <tr>
+                    <!-- http://localhost:8080/userAuthentication/index.php?sort=book_name -->
                     <th>Book Name</th>
                     <th>Author Name</th>
                     <th>Year</th>
@@ -77,6 +33,12 @@ if (!$result) {
                 $sql = "SELECT books.book_name, authors.author_name, books.year, books.genre, books.age_group
                         FROM books
                         INNER JOIN authors ON books.author_id = authors.author_id";
+
+                if (isset($sortValue)) {
+
+                    $sql = $sql . " ORDER BY $sortValue";
+                }
+                echo $sql;
                 $result = mysqli_query($conn, $sql);
 
                 // Display data in the table rows
