@@ -1,7 +1,6 @@
 <?php // Connect to the database
 include 'connection.php';
 $sortValue = $_GET['sort'];
-echo $sortValue;
 ?>
 
 <!DOCTYPE html>
@@ -14,16 +13,29 @@ echo $sortValue;
 
 <body>
     <div class="container">
-        <h2 class="mt-5">Library</h2>
-        <table class="table">
+        <nav class="navbar navbar-light mb-5" style="background-color: #e3f2fd">
+            <a class="navbar-brand">
+                <h2>Library</h2>
+            </a>
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </nav>
+        <table class="table table-bordered border-primary">
             <thead>
                 <tr>
-                    <!-- http://localhost:8080/userAuthentication/index.php?sort=book_name -->
-                    <th>Book Name</th>
-                    <th>Author Name</th>
-                    <th>Year</th>
-                    <th>Genre</th>
-                    <th>Age Group</th>
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=book_name" class="btn btn-primary">Book
+                            Name</a></th>
+                    </a>
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=author_name" class="btn btn-primary">Author
+                            Name</a></th>
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=year" class="btn btn-primary">Year</a>
+                    </th>
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=genre" class="btn btn-primary">Genre</a>
+                    </th>
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=age_group" class="btn btn-primary">Age
+                            Group</a></th>
                 </tr>
             </thead>
             <tbody>
@@ -38,7 +50,6 @@ echo $sortValue;
 
                     $sql = $sql . " ORDER BY $sortValue";
                 }
-                echo $sql;
                 $result = mysqli_query($conn, $sql);
 
                 // Display data in the table rows
