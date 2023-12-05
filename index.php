@@ -1,6 +1,14 @@
-<?php // Connect to the database
+<?php
+// Connect to the database
 include 'connection.php';
 $sortValue = $_GET['sort'];
+
+session_start();
+if (!isset($_SESSION['role'])) {
+    header("Location: signIn.php");
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -22,34 +30,47 @@ $sortValue = $_GET['sort'];
                 <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
             </form>
         </nav>
+
+        <!-- Display options only for librarian -->
+        <?php if ($_SESSION['role'] === 'librarian') : ?>
+        <div class="mb-3">
+            <a href="addBook.php" class="btn btn-success">Add New Book</a>
+            <a href="deleteBook.php" class="btn btn-danger">Delete Book</a>
+            <a href="editBook.php" class="btn btn-warning">Edit Book</a>
+        </div>
+        <?php endif; ?>
+
         <table class="table table-bordered border-primary">
             <thead>
                 <tr>
-                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=book_name" class="btn btn-primary">Book
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=book_name"
+                            class="btn btn-primary">Book
                             Name</a></th>
-                    </a>
-                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=author_name" class="btn btn-primary">Author
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=author_name"
+                            class="btn btn-primary">Author
                             Name</a></th>
-                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=year" class="btn btn-primary">Year</a>
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=year"
+                            class="btn btn-primary">Year</a>
                     </th>
-                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=genre" class="btn btn-primary">Genre</a>
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=genre"
+                            class="btn btn-primary">Genre</a>
                     </th>
-                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=age_group" class="btn btn-primary">Age
+                    <th><a href="http://localhost:8080/userAuthentication/index.php?sort=age_group"
+                            class="btn btn-primary">Age
                             Group</a></th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-
                 // Fetch books and authors data from the tables
                 $sql = "SELECT books.book_name, authors.author_name, books.year, books.genre, books.age_group
                         FROM books
                         INNER JOIN authors ON books.author_id = authors.author_id";
 
                 if (isset($sortValue)) {
-
                     $sql = $sql . " ORDER BY $sortValue";
                 }
+
                 $result = mysqli_query($conn, $sql);
 
                 // Display data in the table rows

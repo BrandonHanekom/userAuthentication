@@ -6,17 +6,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    // Retrieve the hashed password from the 'users' table for the provided username
-    $sql = "SELECT password FROM users WHERE username = '$username'";
+    // Retrieve the hashed password and role from the 'users' table for the provided username
+    $sql = "SELECT password, role FROM users WHERE username = '$username'";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
         $hashedPassword = $row["password"];
+        $role = $row["role"];
 
         // Verify the provided password against the stored hashed password
         if (password_verify($password, $hashedPassword)) {
             // Passwords match, user is authenticated
+            // Set session variables for user information
+            session_start();
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $role;
+
             // Redirect to index.php or perform any other desired actions
             header("Location: index.php");
             exit();
@@ -33,7 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Close the database connection
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html>
