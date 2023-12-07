@@ -53,9 +53,6 @@ if (!empty($_GET['sort'])) {
     $sql .= " ORDER BY $sortValue";
 }
 
-// Debugging: Output the SQL query
-echo "SQL Query: $sql";
-
 // Execute the SQL query
 $result = mysqli_query($conn, $sql);
 
@@ -74,25 +71,28 @@ if (!$result) {
 </head>
 
 <body>
-    <div class="container">
-        <nav class="navbar navbar-light mb-5" style="background-color: #e3f2fd">
+    <div>
+        <nav class="navbar navbar-light b-5" style="background-color: #e3f2fd">
             <a class="navbar-brand">
                 <h2>Library</h2>
             </a>
+            <picture>
+                <!-- Specify the source for larger screens -->
+                <source media="(min-width: 768px)" srcset="images/library.png">
+                <!-- Specify the default source for smaller screens -->
+                <img src="images/library.png" alt="Website Logo" width="50" height="50">
+            </picture>
             <form class="form-inline" method="GET" action="index.php">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
+                    name="search">
                 <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
             </form>
-
-            <?php
-            // Display add, edit, delete buttons based on user role
-            if ($userRole === 'librarian') {
-                echo '<a href="addBook.php" class="btn btn-success">Add Book</a>';
-            }
-
-            ?>
+            <?php if ($userRole === 'librarian') : ?>
+            <a href="addBook.php" class="btn btn-success">Add Book</a>
+            <?php endif; ?>
         </nav>
-
+    </div>
+    <div class="container">
         <table class="table table-bordered border-primary">
             <thead>
                 <tr>
@@ -116,22 +116,10 @@ if (!$result) {
                     echo "<td>" . $row["age_group"] . "</td>";      // Display Age Group
 
                     // Check if 'book_id' key exists in the $row array
-                    if (array_key_exists('book_id', $row)) {
-                        // Check user role before displaying the edit button
-                        if ($userRole === 'librarian') {
-                            // Insert the following line for the Edit button
-                            echo "<td><a href='editBook.php?book_id=" . $row['book_id'] . "' class='btn btn-warning'>Edit</a></td>";
-                            // Insert the following line for the Delete button
-                            echo "<td><a href='deleteBook.php?book_id=" . $row['book_id'] . "' class='btn btn-danger'>Delete</a></td>";
-                        } else {
-                            // User is not a librarian, display empty cells for Edit and Delete buttons
-                            echo "<td></td>";
-                            echo "<td></td>";
-                        }
-                    } else {
-                        // Handle the case where 'book_id' key is not present in $row
-                        echo "<td>Error: Missing book_id. Row data: " . print_r($row, true) . "</td>";
-                        echo "<td></td>"; // Display an empty cell for consistency
+                    if (array_key_exists('book_id', $row) && $userRole === 'librarian') {
+
+                        // Insert the following line for the Delete button
+                        echo "<td><a href='deleteBook.php?book_id=" . $row['book_id'] . "' class='btn btn-danger'>Delete</a></td>";
                     }
 
                     echo "</tr>";
