@@ -72,27 +72,27 @@ if (!$result) {
 
 <body>
     <div>
-        <nav class="navbar navbar-light b-5" style="background-color: #e3f2fd">
+        <nav class="navbar navbar-light mb-3" style="background-color: #e3f2fd">
             <a class="navbar-brand">
-                <h2>Library</h2>
+                <h2 class="m-2">Library
+                    <picture>
+                        <!-- Specify the source for larger screens -->
+                        <source media="(min-width: 768px)" srcset="images/library.png">
+                        <!-- Specify the default source for smaller screens -->
+                        <img src="images/library.png" alt="Website Logo" width="50" height="50">
+                    </picture>
+                </h2>
             </a>
-            <picture>
-                <!-- Specify the source for larger screens -->
-                <source media="(min-width: 768px)" srcset="images/library.png">
-                <!-- Specify the default source for smaller screens -->
-                <img src="images/library.png" alt="Website Logo" width="50" height="50">
-            </picture>
             <form class="form-inline" method="GET" action="index.php">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
-                    name="search">
-                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="search">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
             </form>
-            <?php if ($userRole === 'librarian') : ?>
-            <a href="addBook.php" class="btn btn-success">Add Book</a>
-            <?php endif; ?>
         </nav>
     </div>
     <div class="container">
+        <?php if ($userRole === 'librarian') : ?>
+            <a href="addBook.php" class="btn btn-success mb-2">Add Book</a>
+        <?php endif; ?>
         <table class="table table-bordered border-primary">
             <thead>
                 <tr>
