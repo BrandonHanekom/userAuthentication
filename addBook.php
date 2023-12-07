@@ -1,32 +1,46 @@
 <?php
 include 'connection.php';
 
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'librarian') {
-    header("Location: signIn.php");
-    exit();
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
     $bookName = $_POST["book_name"];
-    $authorName = $_POST["author_name"];
     $year = $_POST["year"];
     $genre = $_POST["genre"];
     $ageGroup = $_POST["age_group"];
 
-    // Perform the database insertion for adding a new book
-    $insertQuery = "INSERT INTO books (book_name, author_name, year, genre, age_group) VALUES ('$bookName', '$authorName', '$year', '$genre', '$ageGroup')";
+    // Check if author_id is set and not empty
+    $authorId = isset($_POST["author_id"]) ? $_POST["author_id"] : null;
 
-    if ($conn->query($insertQuery) === TRUE) {
+    var_dump($_POST["author_id"]);
+
+    // Check if author_id is a numeric value
+    if ($authorId === null || !is_numeric($authorId)) {
+        echo "Error: Invalid author_id.";
+        exit();
+    }
+
+    // Construct the SQL query
+    $sql = "INSERT INTO books (book_name, year, genre, age_group, author_id) 
+            VALUES ('$bookName', '$year', '$genre', '$ageGroup', '$authorId')";
+
+    if ($conn->query($sql) === TRUE) {
+        // Redirect to a success page or perform other actions
         header("Location: index.php");
         exit();
+
+        exit();
     } else {
-        echo "Error: " . $insertQuery . "<br>" . $conn->error;
+        // Handle the case where the insertion fails
+        echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
 
+// Close the database connection
 $conn->close();
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html>
@@ -43,6 +57,11 @@ $conn->close();
             <div class="mb-3">
                 <label for="book_name" class="form-label">Book Name:</label>
                 <input type="text" id="book_name" name="book_name" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="author_id" class="form-label">Author ID:</label>
+                <input type="text" id="author_id" name="author_id" class="form-control" required>
             </div>
 
             <div class="mb-3">

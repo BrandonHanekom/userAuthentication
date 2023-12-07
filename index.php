@@ -20,7 +20,7 @@ if (!isset($_SESSION['user_id'])) {
 $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'member';  // Change 'role' to the actual session variable storing the role
 
 // Fetch books and authors data from the tables
-$sql = "SELECT books.book_name, authors.author_name, books.year, books.genre, books.age_group
+$sql = "SELECT books.book_id, books.book_name, authors.author_name, books.year, books.genre, books.age_group
         FROM books
         INNER JOIN authors ON books.author_id = authors.author_id";
 
@@ -88,9 +88,8 @@ if (!$result) {
             // Display add, edit, delete buttons based on user role
             if ($userRole === 'librarian') {
                 echo '<a href="addBook.php" class="btn btn-success">Add Book</a>';
-                echo '<a href="editBook.php" class="btn btn-warning">Edit Book</a>';
-                echo '<a href="deleteBook.php" class="btn btn-danger">Delete Book</a>';
             }
+
             ?>
         </nav>
 
@@ -106,20 +105,40 @@ if (!$result) {
             </thead>
             <tbody>
                 <?php
-                // Display data in the table rows
+                // Assuming $result is the result from your database query
                 while ($row = mysqli_fetch_assoc($result)) {
+                    // Display book information in table rows
                     echo "<tr>";
-                    echo "<td>" . $row["book_name"] . "</td>";
-                    echo "<td>" . $row["author_name"] . "</td>";
-                    echo "<td>" . $row["year"] . "</td>";
-                    echo "<td>" . $row["genre"] . "</td>";
-                    echo "<td>" . $row["age_group"] . "</td>";
+                    echo "<td>" . $row["book_name"] . "</td>";      // Display Book Name
+                    echo "<td>" . $row["author_name"] . "</td>";    // Display Author Name
+                    echo "<td>" . $row["year"] . "</td>";           // Display Year
+                    echo "<td>" . $row["genre"] . "</td>";          // Display Genre
+                    echo "<td>" . $row["age_group"] . "</td>";      // Display Age Group
+
+                    // Check if 'book_id' key exists in the $row array
+                    if (array_key_exists('book_id', $row)) {
+                        // Check user role before displaying the edit button
+                        if ($userRole === 'librarian') {
+                            // Insert the following line for the Edit button
+                            echo "<td><a href='editBook.php?book_id=" . $row['book_id'] . "' class='btn btn-warning'>Edit</a></td>";
+                            // Insert the following line for the Delete button
+                            echo "<td><a href='deleteBook.php?book_id=" . $row['book_id'] . "' class='btn btn-danger'>Delete</a></td>";
+                        } else {
+                            // User is not a librarian, display empty cells for Edit and Delete buttons
+                            echo "<td></td>";
+                            echo "<td></td>";
+                        }
+                    } else {
+                        // Handle the case where 'book_id' key is not present in $row
+                        echo "<td>Error: Missing book_id. Row data: " . print_r($row, true) . "</td>";
+                        echo "<td></td>"; // Display an empty cell for consistency
+                    }
+
                     echo "</tr>";
                 }
-
-                // Close the database connection
-                mysqli_close($conn);
                 ?>
+
+
             </tbody>
         </table>
     </div>

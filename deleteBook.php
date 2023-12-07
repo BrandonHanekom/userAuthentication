@@ -1,25 +1,30 @@
 <?php
 include 'connection.php';
 
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'librarian') {
-    header("Location: signIn.php");
-    exit();
+// Check if book_id is set in the URL
+if (isset($_GET['book_id'])) {
+    $bookId = $_GET['book_id'];
+
+    // Construct the SQL query for deletion
+    $sql = "DELETE FROM books WHERE book_id = '$bookId'";
+
+    if ($conn->query($sql) === TRUE) {
+        // Redirect to a success page or perform other actions
+        header("Location: index.php");
+        exit();
+    } else {
+        // Handle the case where the deletion fails
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+} else {
+    // Handle the case where book_id is not set
+    echo "Invalid request. Please provide a book ID.";
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $bookIdToDelete = $_POST["book_id_to_delete"];
-
-    // Perform the database deletion for deleting a book
-    $deleteQuery = "DELETE FROM books WHERE book_id = '$bookIdToDelete'";
-    // ...
-
-    header("Location: index.php");
-    exit();
-}
-
+// Close the database connection
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html>
